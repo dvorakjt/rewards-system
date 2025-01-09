@@ -1,6 +1,8 @@
 {
   "files": ["src/main.ts"],
   "compilerOptions": {
+    "target": "ESNEXT",
+    "module": "CommonJS",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "outDir": "./dist"
