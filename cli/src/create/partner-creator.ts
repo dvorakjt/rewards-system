@@ -15,6 +15,7 @@ export class PartnerCreator implements IPartnerCreator {
 
   async createPartner(): Promise<void> {
     const partnerData = await this.partnerDataCollector.collectPartnerData();
-    await this.partnerResourcesCreator.createPartnerResources(partnerData);
+    console.log(partnerData);
+    // await this.partnerResourcesCreator.createPartnerResources(partnerData);
   }
 }
