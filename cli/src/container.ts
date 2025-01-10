@@ -1,5 +1,6 @@
 import { Container } from "inversify";
 import * as CreateModule from "./create";
+import * as LoadingModule from "./loading";
 
 const appContainer = new Container();
 
@@ -18,5 +19,9 @@ appContainer
     CreateModule.TYPES.IPartnerResourcesCreator
   )
   .to(CreateModule.PartnerResourcesCreator);
+
+appContainer
+  .bind<LoadingModule.ILoadingIndicator>(LoadingModule.TYPES.ILoadingIndicator)
+  .to(LoadingModule.LoadingIndicator);
 
 export { appContainer };

@@ -10,10 +10,12 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/cli-spinner": "^0.2.3",
     "typescript": "^5.7.3"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.2.1",
+    "cli-spinner": "^0.2.10",
     "commander": "^13.0.0",
     "inversify": "^6.2.1",
     "reflect-metadata": "^0.2.2"

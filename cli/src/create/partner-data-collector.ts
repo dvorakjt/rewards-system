@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
 import { input, confirm } from "@inquirer/prompts";
 import * as fs from "fs";
+import { getFileExtension } from "../utils";
 import type { IPartnerDataCollector } from "./i-partner-data-collector";
 import type { PartnerData } from "./partner-data";
 
@@ -10,6 +11,24 @@ export class PartnerDataCollector implements IPartnerDataCollector {
     "Valid characters are A-Z, a-z, 0-9, and -";
   private readonly VALID_ENV_VARIABLE_CHARS_MSG =
     "Valid characters are A-Z and _";
+  private readonly EXISTING_PARTNER_IDS = fs.readdirSync("../../app/partners");
+
+  /*
+    See https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
+  */
+  private readonly VALID_IMAGE_FORMATS = [
+    "apng",
+    "png",
+    "avif",
+    "gif",
+    "jpg",
+    "jpeg",
+    "jfif",
+    "pjpeg",
+    "pjp",
+    "svg",
+    "webp",
+  ];
 
   async collectPartnerData(): Promise<PartnerData> {
     const name = await this.collectPartnerName();
@@ -80,8 +99,7 @@ export class PartnerDataCollector implements IPartnerDataCollector {
   }
 
   private isIdAvailable(id: string): boolean {
-    const partners = fs.readdirSync("../../app/partners");
-    return !partners.includes(id);
+    return !this.EXISTING_PARTNER_IDS.includes(id);
   }
 
   private async shouldUseDefaultId(defaultId: string): Promise<boolean> {
@@ -156,10 +174,33 @@ export class PartnerDataCollector implements IPartnerDataCollector {
   }
 
   private async collectImagePath(): Promise<string> {
-    return "";
+    let imagePath = "";
+
+    do {
+      imagePath = await input({
+        message:
+          "Enter the path to the image that you would like to use as the partner's logo",
+      });
+
+      if (!this.doesImagePathExist(imagePath)) {
+        console.warn("The path you entered does not exist.");
+      } else if (!this.isImage(imagePath)) {
+        console.warn(
+          "The path you entered does not point to a valid image. Valid file extensions are " +
+            this.VALID_IMAGE_FORMATS.map((format) => "." + format).join(", ")
+        );
+      }
+    } while (!this.doesImagePathExist(imagePath) || !this.isImage(imagePath));
+
+    return imagePath;
   }
 
-  private isImagePathValid(): boolean {
-    return true;
+  private doesImagePathExist(imagePath: string): boolean {
+    return fs.existsSync(imagePath);
+  }
+
+  private isImage(imagePath: string) {
+    const fileExtension = getFileExtension(imagePath);
+    return this.VALID_IMAGE_FORMATS.includes(fileExtension);
   }
 }
